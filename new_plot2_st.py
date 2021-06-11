@@ -27,7 +27,7 @@ x0 = x_loca
 y0 = y_loca
 #Q = 50
 #with col1:
-Q = st.sidebar.slider('Q', -50, 50, 1, 1)
+Q = st.sidebar.slider('Q', -50, 50, 50, 1)
 
 #Qx0 = 0.1
 #Qy0 = 0
