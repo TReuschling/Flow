@@ -1,5 +1,5 @@
-import matplotlib.pyplot as plt
-from matplotlib import cm
-import numpy as np
-import math
+streamlit==0.82.0
+matplotlib.pyplot
+numpy as np
+math
 
