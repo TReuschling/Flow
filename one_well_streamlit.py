@@ -17,14 +17,14 @@ Y1_para = st.sidebar.slider("Well y-cordinate", 0., 200., 50., 1.)
 Q_para = st.sidebar.slider("Pumping / recharge rates (Slider * 1.e-4))", -10., 10., 1., 0.1)
 K_para = st.sidebar.slider("Hydraulic conductivity (Slider * 5.e-5))", 0., 10., 1., 0.1)
 
-
+Qx_para = st.sidebar.slider("Baseflow in x-direction (Slider * 1.e-10))", -10., 10., 1., 0.1)
 
 #------------------VARIABLES------------------------------------------------
 H = 6.             # thickness [L]
 h0 = 5.5           # reference piezometric head [L] 
 K = K_para * 5.e-5          # hydraulic conductivity [L/T] 
 por = st.sidebar.slider("Porosity", 0., 1., 0.25, 0.01)         # porosity []   old 0.25
-Qx0 = 1.e-10       # baseflow in x-direction [L^2/T] was 1.e-6 before
+Qx0 = Qx_para * 1.e-10       # baseflow in x-direction [L^2/T] was 1.e-6 before
 Qy0 = 0            # baseflow in y-direction [L^2/T]
 # Wells
 x0 = [X1_para, 145]      # x-coordinates well position [L] [99, 145]
