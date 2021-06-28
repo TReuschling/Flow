@@ -11,8 +11,12 @@ col1, col2 = st.beta_columns([1,1])
 
 #--------------SIDEBAR-----------------------------------------------------
 st.sidebar.title("Parameters")
-X1_para = st.sidebar.slider("Well x-cordinate", 0., 200., 99., 1.)
-Y1_para = st.sidebar.slider("Well y-cordinate", 0., 200., 50., 1.)
+X1_para = st.sidebar.slider("Well x1-cordinate", 0., 200., 99., 1.)
+Y1_para = st.sidebar.slider("Well y1-cordinate", 0., 200., 50., 1.)
+X2_para = st.sidebar.slider("Well x2-cordinate", 0., 200., 170., 1.)
+Y2_para = st.sidebar.slider("Well y2-cordinate", 0., 200., 125., 1.)
+
+
 
 Q_para = st.sidebar.slider("Pumping / recharge rates (Slider * 1.e-4))", -10., 10., 1., 0.1)
 K_para = st.sidebar.slider("Hydraulic conductivity (Slider * 5.e-5))", 0., 10., 1., 0.1)
@@ -23,13 +27,13 @@ Qx_para = st.sidebar.slider("Baseflow in x-direction (Slider * 1.e-10))", -10., 
 H = 6.             # thickness [L]
 h0 = 5.5           # reference piezometric head [L] 
 K = K_para * 5.e-5          # hydraulic conductivity [L/T] 
-por = Por_para         # porosity []   old 0.25
+por = Por_para      # porosity []   old 0.25
 Qx0 = Qx_para * 1.e-10       # baseflow in x-direction [L^2/T] was 1.e-6 before
 Qy0 = 0            # baseflow in y-direction [L^2/T]
 # Wells
-x0 = [X1_para, 145]      # x-coordinates well position [L] [99, 145]
-y0 = [Y1_para, 78]       # y-coordinates well position [L] [50, 78
-Q = Q_para * np.array([1.e-4, 1.e-4])  # pumping / recharge rates [L^3/T]
+xwell = np.array([X1_para, X2_para])      # x-coordinates well position [L] [99, 145]
+ywell = np.array([Y1_para, Y2_para])       # y-coordinates well position [L] [50, 78
+Qwell = Q_para * np.array([1.e-4, 1.e-4])  # pumping / recharge rates [L^3/T]
 R = [0.3, 0.2]      # well radius [L]
 # Mesh
 xmin = 0           # minimum x-position of mesh [L]
@@ -42,31 +46,34 @@ jref = 1
 # Graphical output options
 gsurfh = 1         # piezometric head surface plot
 gcontf = 10        # no. filled contour lines (=0: none)
-gquiv = 0         # arrow field plot
+gquiv = 1         # arrow field plot
 gflowp_fit = 1     # flowpaths forward in time
 gflowp_bit = 0     # no. flowpaths backward in time (=0: none)
 gflowp_dot = 0     # flowpaths with dots indicating speed
 gstream = 0       # streamfunction plot            10
 #----------------------------------------execution-------------------------------
-xvec = np.linspace(xmin,xmax,100)
-yvec = np.linspace(ymin,ymax,100)
-[x,y] = np.meshgrid(xvec,yvec)                     # mesh
-phi = -Qx0*x - Qy0*y;                              # baseflow potential
-for j in range(0, Q.ndim):                               # old: for j = 1:size(Q,2)
-    r = np.sqrt((x-x0[j])*(x-x0[j])+(y-y0[j])*(y-y0[j]))   # distances to well
-    phi = phi + (Q[j]/(2*np.pi))*np.log(r)              # potential
+xvec = np.linspace(xmin, xmax, 100)
+yvec = np.linspace(ymin, ymax, 100)
+[x, y] = np.meshgrid(xvec, yvec)                     # mesh
+phi = -Qx0 * x - Qy0 * y                              # baseflow potential
+psi = -Qx0 * y + Qy0 * x
+for i in range(0, xwell.size):              # old version was: for i = 1:size(xwell,2)
+    #r = np.sqrt((x - xwell[i]) * (x - xwell[i]) + (y - ywell[i]) * (y - ywell[i]))
+    r = np.sqrt((x - xwell[i])**2 + (y - ywell[i])**2)
+    phi = phi + (Qwell[i] / (2 * np.pi)) * np.log(r)   # potential
+    psi = psi + (Qwell[i]/ (2 * np.pi)) * np.arctan2((y - ywell[i]), (x - xwell[i]))
 if h0 > H:
-    phi0 = -phi(iref,jref) + K*H*h0 - 0.5*K*H*H 
+    phi0 = -phi(iref, jref) + K * H * h0 - 0.5 * K * H * H 
 else:
-    phi0 = -phi[iref,jref] + 0.5*K*h0*h0;          # reference potential                                                 
-hc = 0.5*H+(1/K/H)*(phi+phi0)                     # head confined
-hu = np.sqrt((2/K)*(phi+phi0))                      # head unconfined
-phicrit = phi0 + 0.5*K*H*H                        # transition confined / unconfined
-confined = (phi>=phicrit)                         # confined / unconfined indicator
-h = confined*hc+ ~confined*hu                    # head
-psi = -Qx0*y + Qy0*x
-for j in range(0, Q.ndim):
-    psi = psi + (Q[j]/(np.pi+np.pi))*np.arctan2((y-y0[j]),(x-x0[j]));  # streamfunction 
+    phi0 = -phi[iref, jref] + 0.5 * K * h0 * h0          # reference potential                                                 
+hc = 0.5 * H + (1 / K / H) * (phi + phi0)                     # head confined
+hu = np.sqrt((2 / K) * (phi + phi0))                      # head unconfined
+phicrit = phi0 + 0.5 * K * H * H                        # transition confined / unconfined
+confined = (phi >= phicrit)                         # confined / unconfined indicator
+h = confined * hc+ ~confined * hu                    # head
+# psi = -Qx0 * y + Qy0 * x                              #old 
+#for j in range(0, Q.ndim):                             #old from 1 well
+#    psi = psi + (Q[j]/(np.pi+np.pi))*np.arctan2((y-y0[j]),(x-x0[j]));  # streamfunction 
 #---------------------------------------display messages-------------------
 #if all(all(confined)):
 #    print('aquifer confined')
@@ -80,17 +87,18 @@ for j in range(0, Q.ndim):
 #    h = max(0, h)
 #--------------------------------------------------------------------------
 [u,v] = np.gradient(-phi)                           # discharge vector  
-Hh = confined*H + ~confined*h                   # aquifer depth  
-u = u/Hh/(xvec[2]-xvec[1])/por; v = v/Hh/(yvec[2]-yvec[1])/por
+Hh = confined * H + ~confined * h                   # aquifer depth  
+u = u / Hh / (xvec[2] - xvec[1]) / por
+v = v / Hh / (yvec[2] - yvec[1]) / por
 #--------------------------------------graphical output--------------------
 if gsurfh: 
     #plt.figure()
     
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
     surf = ax.plot_surface(x, y, h,
-    cmap=cm.coolwarm,
-    linewidth=0,
-    antialiased=True)                         # surface 
+                           cmap=cm.coolwarm,
+                           linewidth=0,
+                           antialiased=True)                         # surface 
 
 
     #fig.colorbar(surf, shrink=0.5, aspect=10)
@@ -101,7 +109,9 @@ if gcontf or gquiv or gflowp_fit or gflowp_bit or gflowp_dot or gstream:
     #st.pyplot(fig)
 if gcontf:                                          # filled contours  
     #colormap(winter); 
-    plt.contourf(x,y,h,gcontf)                  #old contourf(x,y,h,gcontf,'w')
+    plt.contourf(x, y, h,
+                 gcontf,
+                 cmap ="bone")                                #old contourf(x,y,h,gcontf,'w')
     #colorbar
 if gquiv:
     plt.quiver(x,y,u,v)                          # arrow field // quiver(x,y,u,v,'y') 
@@ -122,14 +132,14 @@ if gflowp_fit:                                      # flowpaths
             xstart = [xstart, xvec[99]]
             ystart = [ystart, yvec[i]]
     #fig, ax.streamplot(x,y,u,v)
-    h = plt.streamplot(x,y,u,v)#,xstart,ystart)
-    plt.streamplot(x,y,u,v)#,xstart,ystart)
+    h = plt.streamplot(x,y,u,v,)#,xstart,ystart)
+    plt.streamplot(x,y,u,v,color='k')#,xstart,ystart)
     #set(h,'Color') 
 if gflowp_bit:          
-    for j in range(0, Q.ndim):
-        if Q[j]>0:           # only for pumping wells
-            xstart = x0[j] + R[j]*np.cos(2*np.pi*np.array([1,1,gflowp_bit])/gflowp_bit) 
-            ystart = y0[j] + R[j]*np.sin(2*np.pi*np.array([1,1,gflowp_bit])/gflowp_bit)
+    for j in range(0, Qwell.size):
+        if Qwell[j]>0:           # only for pumping wells
+            xstart = xwell[j] + R[j]*np.cos(2*np.pi*np.array([1,1,gflowp_bit])/gflowp_bit) 
+            ystart = ywell[j] + R[j]*np.sin(2*np.pi*np.array([1,1,gflowp_bit])/gflowp_bit)
             seed_points = np.array([xstart,ystart])
             #fig, ax.streamplot()
             h = plt.streamplot(x,y,-u,-v,start_points=seed_points.T)
@@ -142,7 +152,7 @@ if gflowp_bit:
 #    set (h,'Marker','.','Color','y','MarkerSize',18)
 if gstream:
     plt.contour(x,y,psi,gstream)#,'k','LineWidth',1)
-#plt.show()
+plt.show()
 with col1:
     st.header("3D-Plot")
     st.pyplot(fig)
