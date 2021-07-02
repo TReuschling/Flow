@@ -47,7 +47,7 @@ jref = 1
 gsurfh = 1         # piezometric head surface plot
 gcontf = 10        # no. filled contour lines (=0: none)
 gquiv = 1          # arrow field plot
-gflowp_fit = 1     # flowpaths forward in time
+gflowp_fit = 0     # flowpaths forward in time
 gflowp_bit = 0     # no. flowpaths backward in time (=0: none)
 gflowp_dot = 1     # flowpaths with dots indicating speed
 gstream = 25        # streamfunction plot            10
