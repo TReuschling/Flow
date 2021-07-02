@@ -11,10 +11,10 @@ col1, col2 = st.beta_columns([1,1])
 
 #--------------SIDEBAR-----------------------------------------------------
 st.sidebar.title("Parameters")
-X1_para = st.sidebar.slider("Well x1-cordinate", 0., 200., 99., 1.)
-Y1_para = st.sidebar.slider("Well y1-cordinate", 0., 200., 50., 1.)
-X2_para = st.sidebar.slider("Well x2-cordinate", 0., 200., 170., 1.)
-Y2_para = st.sidebar.slider("Well y2-cordinate", 0., 200., 125., 1.)
+X1_para = st.sidebar.slider("Well1 x-cordinate", 0., 200., 99., 1.)
+Y1_para = st.sidebar.slider("Well1 y-cordinate", 0., 200., 50., 1.)
+X2_para = st.sidebar.slider("Well2 x-cordinate", 0., 200., 170., 1.)
+Y2_para = st.sidebar.slider("Well2 y-cordinate", 0., 200., 125., 1.)
 
 
 
@@ -24,17 +24,17 @@ Por_para = st.sidebar.slider("Porosity", 0., 1., 0.25, 0.01)
 Qx_para = st.sidebar.slider("Baseflow in x-direction (Slider * 1.e-10))", -10., 10., 1., 0.1)
 
 #------------------VARIABLES------------------------------------------------
-H = 6.             # thickness [L]
-h0 = 5.5           # reference piezometric head [L] 
-K = K_para * 5.e-5          # hydraulic conductivity [L/T] 
-por = Por_para      # porosity []   old 0.25
-Qx0 = Qx_para * 1.e-10       # baseflow in x-direction [L^2/T] was 1.e-6 before
-Qy0 = 0            # baseflow in y-direction [L^2/T]
+H = 6.                                      # thickness [L]
+h0 = 5.5                                    # reference piezometric head [L] 
+K = K_para * 5.e-5                          # hydraulic conductivity [L/T] 
+por = Por_para                              # porosity []   old 0.25
+Qx0 = Qx_para * 1.e-10                      # baseflow in x-direction [L^2/T] was 1.e-6 before
+Qy0 = 0                                     # baseflow in y-direction [L^2/T]
 # Wells
-xwell = np.array([X1_para, X2_para])      # x-coordinates well position [L] [99, 145]
-ywell = np.array([Y1_para, Y2_para])       # y-coordinates well position [L] [50, 78
-Qwell = Q_para * np.array([1.e-4, 1.e-4])  # pumping / recharge rates [L^3/T]
-R = [0.3, 0.2]      # well radius [L]
+xwell = np.array([X1_para, X2_para])        # x-coordinates well position [L] [99, 145]
+ywell = np.array([Y1_para, Y2_para])        # y-coordinates well position [L] [50, 78
+Qwell = Q_para * np.array([1.e-4, 1.e-4])   # pumping / recharge rates [L^3/T]
+R = [0.3, 0.2]                              # well radius [L]
 # Mesh
 xmin = 0           # minimum x-position of mesh [L]
 xmax = 200         # maximum x-position of mesh [L]
@@ -46,21 +46,21 @@ jref = 1
 # Graphical output options
 gsurfh = 1         # piezometric head surface plot
 gcontf = 10        # no. filled contour lines (=0: none)
-gquiv = 1         # arrow field plot
-gflowp_fit = 1     # flowpaths forward in time
+gquiv = 1          # arrow field plot
+gflowp_fit = 0     # flowpaths forward in time
 gflowp_bit = 0     # no. flowpaths backward in time (=0: none)
-gflowp_dot = 0     # flowpaths with dots indicating speed
-gstream = 0       # streamfunction plot            10
+gflowp_dot = 1     # flowpaths with dots indicating speed
+gstream = 25        # streamfunction plot            10
 #----------------------------------------execution-------------------------------
 xvec = np.linspace(xmin, xmax, 100)
 yvec = np.linspace(ymin, ymax, 100)
-[x, y] = np.meshgrid(xvec, yvec)                     # mesh
-phi = -Qx0 * x - Qy0 * y                              # baseflow potential
+[x, y] = np.meshgrid(xvec, yvec)                        # mesh
+phi = -Qx0 * x - Qy0 * y                                # baseflow potential
 psi = -Qx0 * y + Qy0 * x
-for i in range(0, xwell.size):              # old version was: for i = 1:size(xwell,2)
+for i in range(0, xwell.size):                          # old version was: for i = 1:size(xwell,2)
     #r = np.sqrt((x - xwell[i]) * (x - xwell[i]) + (y - ywell[i]) * (y - ywell[i]))
     r = np.sqrt((x - xwell[i])**2 + (y - ywell[i])**2)
-    phi = phi + (Qwell[i] / (2 * np.pi)) * np.log(r)   # potential
+    phi = phi + (Qwell[i] / (2 * np.pi)) * np.log(r)    # potential
     psi = psi + (Qwell[i]/ (2 * np.pi)) * np.arctan2((y - ywell[i]), (x - xwell[i]))
 if h0 > H:
     phi0 = -phi(iref, jref) + K * H * h0 - 0.5 * K * H * H 
@@ -109,9 +109,8 @@ if gcontf or gquiv or gflowp_fit or gflowp_bit or gflowp_dot or gstream:
     #st.pyplot(fig)
 if gcontf:                                          # filled contours  
     #colormap(winter); 
-    plt.contourf(x, y, h,
-                 gcontf,
-                 cmap ="bone")                                #old contourf(x,y,h,gcontf,'w')
+    plt.contour(x, y, h,
+                 gcontf)                                #old contourf(x,y,h,gcontf,'w')
     #colorbar
 if gquiv:
     plt.quiver(x,y,u,v)                          # arrow field // quiver(x,y,u,v,'y') 
@@ -133,7 +132,7 @@ if gflowp_fit:                                      # flowpaths
             ystart = [ystart, yvec[i]]
     #fig, ax.streamplot(x,y,u,v)
     h = plt.streamplot(x,y,u,v,)#,xstart,ystart)
-    plt.streamplot(x,y,u,v,color='k')#,xstart,ystart)
+    plt.streamplot(x,y,u,v,color='b')#,xstart,ystart)
     #set(h,'Color') 
 if gflowp_bit:          
     for j in range(0, Qwell.size):
