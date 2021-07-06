@@ -25,8 +25,8 @@ Por_para = st.sidebar.slider("Porosity", 0., 1., 0.25, 0.01)
 Qx_para = st.sidebar.slider("Baseflow in x-direction [m^2/s] (Slider * 1.e-10))", -10., 10., 1., 0.1)
 
 #------------------VARIABLES------------------------------------------------
-H = 6.                                      # thickness [L]
-h0 = 5.5                                    # reference piezometric head [L] 
+H = 10.                                      # thickness [L]
+h0 = 9.5                                    # reference piezometric head [L] 
 K = K_para * 5.e-5                          # hydraulic conductivity [L/T] 
 por = Por_para                              # porosity []   old 0.25
 Qx0 = Qx_para * 1.e-10                      # baseflow in x-direction [L^2/T] was 1.e-6 before
