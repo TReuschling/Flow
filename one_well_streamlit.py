@@ -11,14 +11,15 @@ col1, col2 = st.beta_columns([1,1])
 
 #--------------SIDEBAR-----------------------------------------------------
 st.sidebar.title("Parameters")
-X1_para = st.sidebar.slider("Well1 x-cordinate", 0., 200., 99., 1.)
-Y1_para = st.sidebar.slider("Well1 y-cordinate", 0., 200., 50., 1.)
-X2_para = st.sidebar.slider("Well2 x-cordinate", 0., 200., 170., 1.)
-Y2_para = st.sidebar.slider("Well2 y-cordinate", 0., 200., 125., 1.)
+X1_para = st.sidebar.slider("Well1 x-cordinate", 1., 199., 99., 1.)
+Y1_para = st.sidebar.slider("Well1 y-cordinate", 1., 199., 50., 1.)
+X2_para = st.sidebar.slider("Well2 x-cordinate", 1., 199., 170., 1.)
+Y2_para = st.sidebar.slider("Well2 y-cordinate", 1., 199., 125., 1.)
 
 
 
-Q_para = st.sidebar.slider("Pumping / recharge rates (Slider * 1.e-4))", -10., 10., 1., 0.1)
+Q_para1 = st.sidebar.slider("Pumping / recharge rate1 (Slider * 1.e-4))", -10., 10., 1., 0.1)
+Q_para2 = st.sidebar.slider("Pumping / recharge rate2 (Slider * 1.e-4))", -10., 10., 1., 0.1)
 K_para = st.sidebar.slider("Hydraulic conductivity (Slider * 5.e-5))", 0., 10., 1., 0.1)
 Por_para = st.sidebar.slider("Porosity", 0., 1., 0.25, 0.01)
 Qx_para = st.sidebar.slider("Baseflow in x-direction (Slider * 1.e-10))", -10., 10., 1., 0.1)
@@ -33,7 +34,7 @@ Qy0 = 0                                     # baseflow in y-direction [L^2/T]
 # Wells
 xwell = np.array([X1_para, X2_para])        # x-coordinates well position [L] [99, 145]
 ywell = np.array([Y1_para, Y2_para])        # y-coordinates well position [L] [50, 78
-Qwell = Q_para * np.array([1.e-4, 1.e-4])   # pumping / recharge rates [L^3/T]
+Qwell = np.array([Q_para1 * 1.e-4, Q_para2 * 1.e-4])   # pumping / recharge rates [L^3/T]
 R = [0.3, 0.2]                              # well radius [L]
 # Mesh
 xmin = 0           # minimum x-position of mesh [L]
@@ -151,7 +152,7 @@ if gflowp_bit:
 #    set (h,'Marker','.','Color','y','MarkerSize',18)
 if gstream:
     plt.contour(x,y,psi,gstream)#,'k','LineWidth',1)
-plt.show()
+#plt.show()
 with col1:
     st.header("3D-Plot")
     st.pyplot(fig)
