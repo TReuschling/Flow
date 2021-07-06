@@ -19,7 +19,7 @@ Y2_para = st.sidebar.slider("Well2 y-cordinate [m]", 1., 199., 125., 1.)
 
 
 Q_para1 = st.sidebar.slider("Pumping / recharge rate1 in [m$^3$/s] (Slider * 1.e-4))", -10., 10., 1., 0.1)
-Q_para2 = st.sidebar.slider("Pumping / recharge rate2 in [m<sup>3</sup>/s] (Slider * 1.e-4))", -10., 10., 1., 0.1)
+Q_para2 = st.sidebar.slider("Pumping / recharge rate2 in [m\u00B3/s] (Slider * 1.e-4))", -10., 10., 1., 0.1)
 K_para = st.sidebar.slider("Hydraulic conductivity [m/s] (Slider * 5.e-5))", 0., 10., 1., 0.1)
 Por_para = st.sidebar.slider("Porosity", 0., 1., 0.25, 0.01)
 Qx_para = st.sidebar.slider("Baseflow in x-direction [m^2/s] (Slider * 1.e-10))", -10., 10., 1., 0.1)
