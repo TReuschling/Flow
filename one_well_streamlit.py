@@ -11,18 +11,18 @@ col1, col2 = st.beta_columns([1,1])
 
 #--------------SIDEBAR-----------------------------------------------------
 st.sidebar.title("Parameters")
-X1_para = st.sidebar.slider("Well1 x-cordinate", 1., 199., 99., 1.)
-Y1_para = st.sidebar.slider("Well1 y-cordinate", 1., 199., 50., 1.)
-X2_para = st.sidebar.slider("Well2 x-cordinate", 1., 199., 170., 1.)
-Y2_para = st.sidebar.slider("Well2 y-cordinate", 1., 199., 125., 1.)
+X1_para = st.sidebar.slider("Well1 x-cordinate [m]", 1., 199., 99., 1.)
+Y1_para = st.sidebar.slider("Well1 y-cordinate [m]", 1., 199., 50., 1.)
+X2_para = st.sidebar.slider("Well2 x-cordinate [m]", 1., 199., 170., 1.)
+Y2_para = st.sidebar.slider("Well2 y-cordinate [m]", 1., 199., 125., 1.)
 
 
 
-Q_para1 = st.sidebar.slider("Pumping / recharge rate1 (Slider * 1.e-4))", -10., 10., 1., 0.1)
-Q_para2 = st.sidebar.slider("Pumping / recharge rate2 (Slider * 1.e-4))", -10., 10., 1., 0.1)
-K_para = st.sidebar.slider("Hydraulic conductivity (Slider * 5.e-5))", 0., 10., 1., 0.1)
+Q_para1 = st.sidebar.slider("Pumping / recharge rate1 in [m^3/s] (Slider * 1.e-4))", -10., 10., 1., 0.1)
+Q_para2 = st.sidebar.slider("Pumping / recharge rate2 in [m^3/s] (Slider * 1.e-4))", -10., 10., 1., 0.1)
+K_para = st.sidebar.slider("Hydraulic conductivity [m/s] (Slider * 5.e-5))", 0., 10., 1., 0.1)
 Por_para = st.sidebar.slider("Porosity", 0., 1., 0.25, 0.01)
-Qx_para = st.sidebar.slider("Baseflow in x-direction (Slider * 1.e-10))", -10., 10., 1., 0.1)
+Qx_para = st.sidebar.slider("Baseflow in x-direction [m^2/s] (Slider * 1.e-10))", -10., 10., 1., 0.1)
 
 #------------------VARIABLES------------------------------------------------
 H = 6.                                      # thickness [L]
