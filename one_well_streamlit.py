@@ -13,16 +13,16 @@ col1, col2 = st.beta_columns([1,1])
 st.sidebar.title("Parameters")
 X1_para = st.sidebar.slider("Well1 x-cordinate [m]", 1., 199., 99., 1.)
 Y1_para = st.sidebar.slider("Well1 y-cordinate [m]", 1., 199., 50., 1.)
+Q_para1 = st.sidebar.slider("Pumping / recharge rate1 in [m\u00B3/s] (Slider * 1.e-4))", -10., 10., 1., 0.1)
+
 X2_para = st.sidebar.slider("Well2 x-cordinate [m]", 1., 199., 170., 1.)
 Y2_para = st.sidebar.slider("Well2 y-cordinate [m]", 1., 199., 125., 1.)
-
-
-
-Q_para1 = st.sidebar.slider("Pumping / recharge rate1 in [m\u00B3/s] (Slider * 1.e-4))", -10., 10., 1., 0.1)
 Q_para2 = st.sidebar.slider("Pumping / recharge rate2 in [m\u00B3/s] (Slider * 1.e-4))", -10., 10., 1., 0.1)
-K_para = st.sidebar.slider("Hydraulic conductivity [m/s] (Slider * 5.e-5))", 0., 10., 1., 0.1)
-Por_para = st.sidebar.slider("Porosity", 0., 1., 0.25, 0.01)
+
 Qx_para = st.sidebar.slider("Baseflow in x-direction [m\u00B2/s] (Slider * 1.e-10))", -10., 10., 1., 0.1)
+K_para = st.sidebar.slider("Hydraulic conductivity [m/s] (Slider * 5.e-5))", 0.1, 10., 1., 0.1)
+Por_para = st.sidebar.slider("Porosity", 0., 1., 0.25, 0.01)
+
 
 #------------------VARIABLES------------------------------------------------
 H = 10.                                      # thickness [L]
@@ -99,7 +99,15 @@ if gsurfh:
     surf = ax.plot_surface(x, y, h,
                            cmap=cm.coolwarm,
                            linewidth=0,
-                           antialiased=True)                         # surface 
+                           antialiased=True)
+    fig.colorbar(surf, ax=ax, shrink=.8)
+    ax.set_xlabel('x [m]')
+    ax.set_ylabel('y [m]')
+    # set z (h)-axis invisible for better visibilty if colorbar is active
+    if fig.colorbar:
+        ax.set_zticks([])
+    else:
+        ax.set_zlabel('head decline [m]')
 
 
     #fig.colorbar(surf, shrink=0.5, aspect=10)
@@ -109,10 +117,12 @@ if gcontf or gquiv or gflowp_fit or gflowp_bit or gflowp_dot or gstream:
     #fig, ax = plt.subplots(2)
     #st.pyplot(fig)
 if gcontf:                                          # filled contours  
-    #colormap(winter); 
-    plt.contour(x, y, h,
-                 gcontf)                                #old contourf(x,y,h,gcontf,'w')
-    #colorbar
+    fig3, ax = plt.subplots()
+    contour = plt.contour(x, y, h,
+                 gcontf)
+    ax.set_title('Contour Plot')
+    ax.set_xlabel('x [m]')
+    ax.set_ylabel('y [m]')
 if gquiv:
     plt.quiver(x,y,u,v)                          # arrow field // quiver(x,y,u,v,'y') 
 if gflowp_fit:                                      # flowpaths 
@@ -161,4 +171,4 @@ with col2:
     st.markdown('')
     st.markdown('')
     st.markdown('')
-    st.pyplot(fig2)
+    st.pyplot(fig3)
