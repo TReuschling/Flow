@@ -58,11 +58,12 @@ yvec = np.linspace(ymin, ymax, 100)
 [x, y] = np.meshgrid(xvec, yvec)                        # mesh
 phi = -Qx0 * x - Qy0 * y                                # baseflow potential
 psi = -Qx0 * y + Qy0 * x
-for i in range(0, xwell.size):                          # old version was: for i = 1:size(xwell,2)
-    #r = np.sqrt((x - xwell[i]) * (x - xwell[i]) + (y - ywell[i]) * (y - ywell[i]))
+
+for i in range(0, xwell.size):                       
     r = np.sqrt((x - xwell[i])**2 + (y - ywell[i])**2)
-    phi = phi + (Qwell[i] / (2 * np.pi)) * np.log(r)    # potential
+    phi = phi + (Qwell[i] / (2 * np.pi)) * np.log(r)    
     psi = psi + (Qwell[i]/ (2 * np.pi)) * np.arctan2((y - ywell[i]), (x - xwell[i]))
+
 if h0 > H:
     phi0 = -phi(iref, jref) + K * H * h0 - 0.5 * K * H * H 
 else:
@@ -98,16 +99,17 @@ if gsurfh:
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
     surf = ax.plot_surface(x, y, h,
                            cmap=cm.coolwarm,
-                           linewidth=0,
+                           linewidth=0.1,
                            antialiased=True)
-    fig.colorbar(surf, ax=ax, shrink=.8)
+    #fig.colorbar(surf, ax=ax, shrink=.8)
     ax.set_xlabel('x [m]')
     ax.set_ylabel('y [m]')
     # set z (h)-axis invisible for better visibilty if colorbar is active
-    if fig.colorbar:
-        ax.set_zticks([])
-    else:
-        ax.set_zlabel('head decline [m]')
+    #if fig.colorbar:
+    #    ax.set_zticks([])
+    #else:
+    ax.set_zlabel('drawdown [m]')
+    fig.colorbar(surf, shrink=.8, ax=[ax], location = "left") # ax=[ax], location='left' for left side
 
 
     #fig.colorbar(surf, shrink=0.5, aspect=10)
@@ -168,7 +170,4 @@ with col1:
     st.pyplot(fig)
 with col2:
     st.header("Surfaceplot")
-    st.markdown('')
-    st.markdown('')
-    st.markdown('')
     st.pyplot(fig3)
