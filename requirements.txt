@@ -1,4 +1,5 @@
-streamlit==0.82.0
+streamlit==0.84.0
 matplotlib
 numpy
-
+pandas
+base64
