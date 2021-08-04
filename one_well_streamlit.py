@@ -19,7 +19,6 @@ if nav == "Welcome":
 if nav == "Wells":
     col1, col2 = st.beta_columns([1,1])
     #--------------SLIDER-----------------------------------------------------
-    st.sidebar.title("Parameters")
     X1_para = st.slider("Well1 x-cordinate [m]", 1., 199., 99., 1.)
     Y1_para = st.slider("Well1 y-cordinate [m]", 1., 199., 50., 1.)
     X2_para = st.slider("Well2 x-cordinate [m]", 1., 199., 170., 1.)
