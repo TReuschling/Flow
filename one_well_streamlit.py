@@ -1,11 +1,13 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 from matplotlib import cm
+from matplotlib.patches import Rectangle
 import numpy as np
 #import math
 import pandas as pd
 #from bokeh.plotting import figure
 import base64
+import pathlib
 
 
 
@@ -19,6 +21,7 @@ if nav == "Welcome":
 if nav == "Wells":
     col1, col2 = st.beta_columns([1,1])
     #--------------SLIDER-----------------------------------------------------
+    st.sidebar.title("Parameters")
     X1_para = st.slider("Well1 x-cordinate [m]", 1., 199., 99., 1.)
     Y1_para = st.slider("Well1 y-cordinate [m]", 1., 199., 50., 1.)
     X2_para = st.slider("Well2 x-cordinate [m]", 1., 199., 170., 1.)
@@ -280,6 +283,10 @@ if nav == "River":
         #plt.xlim(0,200)
         ax.set_xlabel('x [m]')
         ax.set_ylabel('y [m]')
+        # Create a Rectangle patch
+        rect = Rectangle((198, 0),2,200,linewidth=1,edgecolor='b',facecolor='b', zorder=2) # zorder makes is intransparent
+        # Add the patch to the Axes
+        ax.add_patch(rect)
     if gquiv:
         plt.quiver(x,y,u,v)                          # arrow field // quiver(x,y,u,v,'y') 
     if gflowp_fit:                                      # flowpaths 
@@ -344,6 +351,24 @@ if nav == "River":
     b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
     href = f'<a href="data:file/csv;base64,{b64}">Download CSV File</a> (right-click and save as &lt;some_name&gt;.csv)'
     st.markdown(href, unsafe_allow_html=True)
+
+
+    # # HACK This only works when we've installed streamlit with pipenv, so the
+    # # permissions during install are the same as the running process
+    # STREAMLIT_STATIC_PATH = pathlib.Path(st.__path__[0]) / 'static'
+    # # We create a downloads directory within the streamlit static asset directory
+    # # and we write output files to it
+    # DOWNLOADS_PATH = (STREAMLIT_STATIC_PATH / "downloads")
+    # if not DOWNLOADS_PATH.is_dir():
+    #     DOWNLOADS_PATH.mkdir()
+
+    # def main():
+    #     st.markdown("Download from [downloads/mydata.csv](downloads/mydata.csv)")
+    #     mydataframe = pd.DataFrame.from_dict({'col_1': [3, 2, 1, 0], 'col_2': ['a', 'b', 'c', 'd']})
+    #     mydataframe.to_csv(str(DOWNLOADS_PATH / "mydata.csv"), index=False)
+
+    # if __name__ == "__main__":
+    #     main()
 
     ratio = Qwell[0] / ( Qx0 * np.pi * ((2 * xmax - X1_para)- X1_para)/2)
 
@@ -474,6 +499,10 @@ if nav == "No Flow":
         #plt.xlim(0,200)
         ax.set_xlabel('x [m]')
         ax.set_ylabel('y [m]')
+        # Create a Rectangle patch
+        rect = Rectangle((198, 0),2,200,linewidth=1,edgecolor='k',facecolor='k', zorder=2) # zorder makes is intransparent
+        # Add the patch to the Axes
+        ax.add_patch(rect)
     if gquiv:
         plt.quiver(x,y,u,v)                          # arrow field // quiver(x,y,u,v,'y') 
     if gflowp_fit:                                      # flowpaths 
