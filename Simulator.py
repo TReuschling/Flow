@@ -2,6 +2,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.patches import Rectangle
+from matplotlib.ticker import StrMethodFormatter
 import numpy as np
 #import math
 import pandas as pd
@@ -19,29 +20,36 @@ if nav == "Welcome":
     st.title("Welcome to the prototype")
 
 if nav == "Wells":
-    col1, col2 = st.beta_columns([1,1])
+    col1, col2, col3, col4, col5= st.beta_columns([20,1,20,1,20])
     #--------------SLIDER-----------------------------------------------------
-    st.sidebar.title("Parameters")
-    X1_para = st.slider("Well1 x-cordinate [m]", 1., 199., 99., 1.)
-    Y1_para = st.slider("Well1 y-cordinate [m]", 1., 199., 50., 1.)
-    X2_para = st.slider("Well2 x-cordinate [m]", 1., 199., 170., 1.)
-    Y2_para = st.slider("Well2 y-cordinate [m]", 1., 199., 125., 1.)
+    with col1:
+        st.subheader("Well 1")
+        X1_para = st.slider("x-cordinate [m]", 1., 199., 99., 1.)
+        Y1_para = st.slider("y-cordinate [m]", 1., 199., 50., 1.)
+        Q_para1 = st.number_input("Pumping / recharge rate Q1 in [m\u00B3/s] (Input * 1.e-4))", -10000., 10000., 1., 0.1)
 
+    with col3:
+        st.subheader("Well 2")
+        X2_para = st.slider("x-cordinate [m]", 1., 199., 170., 1.)
+        Y2_para = st.slider("y-cordinate [m]", 1., 199., 125., 1.)
+        Q_para2 = st.number_input("Pumping / recharge rate Q2 in [m\u00B3/s] (Input * 1.e-4))", -10000., 10000., 0., 0.1)
 
-
-    Q_para1 = st.slider("Pumping / recharge rate1 in [m\u00B3/s] (Slider * 1.e-4))", -10., 10., 1., 0.1)
-    Q_para2 = st.slider("Pumping / recharge rate2 in [m\u00B3/s] (Slider * 1.e-4))", -10., 10., 1., 0.1)
-    K_para = st.slider("Hydraulic conductivity [m/s] (Slider * 5.e-5))", 0., 10., 1., 0.1)
-    Por_para = st.slider("Porosity", 0., 1., 0.25, 0.01)
-    Qx_para = st.slider("Baseflow in x-direction [m\u00B2/s] (Slider * 1.e-10))", -10., 10., 1., 0.1)
-
+    with col5:
+        st.subheader("Parameters")
+        #H_para = st.slider("Thickness of Aquifer [m])", 5., 10., 8., 0.1)
+        #h0_para = st.slider("Reference piezometric head [m])", 5., 10., 8., 0.1)
+        K_para = st.slider("Hydraulic conductivity [m/s] (Slider * 5.e-5))", 0.1, 1000., 1., 1.)
+        Por_para = st.slider("Porosity", 0., 1., 0.25, 0.01)
+        Qx_para = st.slider("Baseflow in x-direction [m\u00B2/s] (Slider * 1.e-10))", -10000., 10000., 0., 0.1)
+        #Qy_para = st.slider("Baseflow in y-direction [m\u00B2/s] (Slider * 1.e-10))", -10., 10., 0., 0.1)
     #------------------VARIABLES------------------------------------------------
-    H = 10.                                      # thickness [L]
+    H = 9.                                     # thickness [L]
     h0 = 9.5                                    # reference piezometric head [L] 
     K = K_para * 5.e-5                          # hydraulic conductivity [L/T] 
     por = Por_para                              # porosity []   old 0.25
     Qx0 = Qx_para * 1.e-10                      # baseflow in x-direction [L^2/T] was 1.e-6 before
-    Qy0 = 0                                     # baseflow in y-direction [L^2/T]
+    #Qy0 = Qy_para * 1.e-10                                    # baseflow in y-direction [L^2/T]
+    Qy0 = 0
     # Wells
     xwell = np.array([X1_para, X2_para])        # x-coordinates well position [L] [99, 145]
     ywell = np.array([Y1_para, Y2_para])        # y-coordinates well position [L] [50, 78
@@ -58,7 +66,7 @@ if nav == "Wells":
     # Graphical output options
     gsurfh = 1         # piezometric head surface plot
     gcontf = 10        # no. filled contour lines (=0: none)
-    gquiv = 1          # arrow field plot
+    gquiv = 0          # arrow field plot
     gflowp_fit = 0     # flowpaths forward in time
     gflowp_bit = 0     # no. flowpaths backward in time (=0: none)
     gflowp_dot = 1     # flowpaths with dots indicating speed
@@ -75,7 +83,7 @@ if nav == "Wells":
         phi = phi + (Qwell[i] / (2 * np.pi)) * np.log(r)    # potential
         psi = psi + (Qwell[i]/ (2 * np.pi)) * np.arctan2((y - ywell[i]), (x - xwell[i]))
     if h0 > H:
-        phi0 = -phi(iref, jref) + K * H * h0 - 0.5 * K * H * H 
+        phi0 = -phi[iref, jref] + K * H * h0 - 0.5 * K * H * H 
     else:
         phi0 = -phi[iref, jref] + 0.5 * K * h0 * h0          # reference potential                                                 
     hc = 0.5 * H + (1 / K / H) * (phi + phi0)                     # head confined
@@ -91,27 +99,38 @@ if nav == "Wells":
     #--------------------------------------graphical output--------------------
     if gsurfh: 
         #plt.figure()
-        
         fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
         surf = ax.plot_surface(x, y, h,
                             cmap=cm.coolwarm,
                             linewidth=0,
                             antialiased=True)                         # surface 
-
+        plt.gca().zaxis.set_major_formatter(StrMethodFormatter('{x:,.4f}'))
+        ax.set_xlabel('x [m]')
+        ax.set_ylabel('y [m]')
+        #ax.set_title('3-Plot')
+        # set z (h)-axis invisible for better visibilty if colorbar is active
+        #if fig.colorbar:
+        #    ax.set_zticks([])
+        #else:
+        ax.set_zlabel('drawdown [m]')
+        #fig.colorbar(surf, shrink=.8, ax=[ax], location = "left") # ax=[ax], location='left' for left side
 
         #fig.colorbar(surf, shrink=0.5, aspect=10)
     if gcontf or gquiv or gflowp_fit or gflowp_bit or gflowp_dot or gstream:
-        #plt.figure()
-        fig2 = plt.figure()
-        #fig, ax = plt.subplots(2)
-        #st.pyplot(fig)
+        #fig2 = plt.figure()
+        fig2, ax = plt.subplots()
+        contour = plt.contour(x, y, h,
+                gcontf)
+        ax.set_xlabel('x [m]')
+        ax.set_ylabel('y [m]')
     if gcontf:                                          # filled contours  
         #colormap(winter); 
         plt.contour(x, y, h,
                     gcontf)                                #old contourf(x,y,h,gcontf,'w')
         #colorbar
+
     if gquiv:
-        plt.quiver(x,y,u,v)                          # arrow field // quiver(x,y,u,v,'y') 
+        plt.quiver(x,y,v,u)                          # arrow field // quiver(x,y,u,v,'y') 
     if gflowp_fit:                                      # flowpaths 
         xstart = []
         ystart = []
@@ -150,15 +169,42 @@ if nav == "Wells":
     if gstream:
         plt.contour(x,y,psi,gstream)#,'k','LineWidth',1)
     #plt.show()
-    with col1:
+    with col3:
         st.header("3D-Plot")
         st.pyplot(fig)
-    with col2:
+    with col1:
         st.header("Surfaceplot")
         st.markdown('')
         st.markdown('')
         st.markdown('')
         st.pyplot(fig2)
+
+    dfh = pd.DataFrame(data = h)
+    dfh_rounded = dfh.round(decimals = 3)
+
+#------------------DOWNLOAD CSV FILE----------------------------------------------------------------------#
+    csv = dfh_rounded.to_csv(sep="\t", index=False)
+    b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
+    href = f'<a href="data:file/csv;base64,{b64}">CSV File for head</a>'
+    with col5:
+        st.markdown('')
+        st.markdown('')
+        st.markdown('')
+        st.markdown('')
+        st.markdown('')
+        st.markdown('')
+        '''
+        **Download:**  
+        (right-click and save as name.csv)  
+        '''
+        st.markdown(href, unsafe_allow_html=True)
+    
+    st.markdown('')
+    st.markdown('')
+    '''
+    **Sourcefile:** https://github.com/TReuschling/Flow (open-source CC BY 4.0)  
+    **Disclaimer:** Authors of code are not responsible for obtained results.
+    '''
 #-----------------------------RIVER------------------------------------------#
 #-----------------------------RIVER------------------------------------------#
 #-----------------------------RIVER------------------------------------------#
@@ -344,7 +390,6 @@ if nav == "River":
 
     dfh = pd.DataFrame(data = h)
     dfh_rounded = dfh.round(decimals = 3)
-    #dfh_rounded.to_csv(r'/Users/tassiloreuschling/Uni/Bachelorarbeit/Data_aus_python/h.csv', index = False)
 
 #------------------DOWNLOAD CSV FILE----------------------------------------------------------------------#
     csv = dfh_rounded.to_csv(sep="\t", index=False)
