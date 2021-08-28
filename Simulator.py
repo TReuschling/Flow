@@ -26,13 +26,13 @@ if nav == "Wells":
         st.subheader("Well 1")
         X1_para = st.slider("x-cordinate [m]", 1., 199., 99., 1.)
         Y1_para = st.slider("y-cordinate [m]", 1., 199., 50., 1.)
-        Q_para1 = st.number_input("Pumping / recharge rate Q1 in [m\u00B3/s] (Input * 1.e-4))", -10000., 10000., 1., 0.1)
+        Q_para1 = st.number_input("Pumping / recharge rate Q1 in [m\u00B3/s] (Input * 1.e-4))", -30., 30., 1., 0.1)
 
     with col3:
         st.subheader("Well 2")
         X2_para = st.slider("x-cordinate [m]", 1., 199., 170., 1.)
         Y2_para = st.slider("y-cordinate [m]", 1., 199., 125., 1.)
-        Q_para2 = st.number_input("Pumping / recharge rate Q2 in [m\u00B3/s] (Input * 1.e-4))", -10000., 10000., 0., 0.1)
+        Q_para2 = st.number_input("Pumping / recharge rate Q2 in [m\u00B3/s] (Input * 1.e-4))", -30., 30., 0., 0.1)
 
     with col5:
         st.subheader("Parameters")
