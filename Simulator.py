@@ -173,7 +173,7 @@ if nav == "Wells":
         st.header("3D-Plot")
         st.pyplot(fig)
     with col1:
-        st.header("Surfaceplot")
+        st.header("Contour-Plot")
         st.markdown('')
         st.markdown('')
         st.markdown('')
