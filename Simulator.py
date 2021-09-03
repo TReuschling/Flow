@@ -192,10 +192,10 @@ if nav == "Wells":
     #    set (h,'Marker','.','Color','y','MarkerSize',18)
     #plt.show()
     with col3:
-        st.header("Drawdown-Plot")
+        st.header("Drawdown")
         st.pyplot(fig)
     with col1:
-        st.header("Flowfield-Plot")
+        st.header("Flowfield")
         st.markdown('')
         st.pyplot(fig2)
 
