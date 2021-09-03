@@ -71,7 +71,7 @@ if nav == "Wells":
     gflowp_fit = 0     # flowpaths forward in time
     gflowp_bit = 0     # no. flowpaths backward in time (=0: none)
     gflowp_dot = 1     # flowpaths with dots indicating speed
-    gstream = 10        # streamfunction plot            10
+    gstream = 25        # streamfunction plot            10
     #----------------------------------------execution-------------------------------
     xvec = np.linspace(xmin, xmax, 100)
     yvec = np.linspace(ymin, ymax, 100)
@@ -121,16 +121,36 @@ if nav == "Wells":
         #fig2 = plt.figure()
         fig2, ax = plt.subplots()
         contour = plt.contour(x, y, h,
-                gcontf)
+            gcontf,
+            cmap = cm.Blues)
+            #colors=['#808080', '#A0A0A0', '#C0C0C0'], extend='both')
         ax.set_xlabel('x [m]')
         ax.set_ylabel('y [m]')
-    if gstream:
-        plt.contour(x,y,psi,gstream)#,'k','LineWidth',1)
-    if gcontf:                                          # filled contours  
-        #colormap(winter); 
-        plt.contour(x, y, h,
-                    gcontf)         
-        fig.colorbar(contour, shrink=.8, ax=[ax], location = "left")                       
+        # fig2, ax = plt.subplots()
+        contour2 = plt.contour(x ,y, psi,
+            gstream,
+            #cmap = cm.binary
+            colors=['#808080', '#808080', '#808080'], extend='both')
+        contour.cmap.set_over('red')
+        contour.cmap.set_under('blue')
+        contour.changed()
+        #plt.clabel(contour, inline=1, fontsize=10)
+        labels = ['Streamline', 'Potentialline']
+        contour2.collections[8].set_label(labels[0])
+        contour.collections[7].set_label(labels[1])
+
+        plt.legend(loc='upper left')
+    # if gstream:
+    #     plt.contour(x ,y, psi,
+    #             gstream,
+    #             cmmap = cm.Greys)
+        #set(psi,'LineColor','none')
+    #fig.colorbar(contour, shrink=.8, ax=[ax], location = "left")    
+    # if gcontf:                                          # filled contours  
+    #     #colormap(winter); 
+    #     plt.contour(x, y, h,
+    #                 gcontf)         
+    #fig.colorbar(contour, shrink=.8, ax=[ax], location = "left")                       
         #colorbar
 
     if gquiv:
