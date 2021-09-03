@@ -20,6 +20,7 @@ if nav == "Welcome":
     st.title("Welcome to the prototype")
 
 if nav == "Wells":
+    st.title("Wells in  uniform flowfield")
     col1, col2, col3, col4, col5= st.beta_columns([20,1,20,1,20])
     #--------------SLIDER-----------------------------------------------------
     with col1:
@@ -113,7 +114,7 @@ if nav == "Wells":
         #    ax.set_zticks([])
         #else:
         ax.set_zlabel('drawdown [m]')
-        #fig.colorbar(surf, shrink=.8, ax=[ax], location = "left") # ax=[ax], location='left' for left side
+        fig.colorbar(surf, shrink=.8, ax=[ax], location = "left") # ax=[ax], location='left' for left side
 
         #fig.colorbar(surf, shrink=0.5, aspect=10)
     if gcontf or gquiv or gflowp_fit or gflowp_bit or gflowp_dot or gstream:
@@ -123,10 +124,13 @@ if nav == "Wells":
                 gcontf)
         ax.set_xlabel('x [m]')
         ax.set_ylabel('y [m]')
+    if gstream:
+        plt.contour(x,y,psi,gstream)#,'k','LineWidth',1)
     if gcontf:                                          # filled contours  
         #colormap(winter); 
         plt.contour(x, y, h,
-                    gcontf)                                #old contourf(x,y,h,gcontf,'w')
+                    gcontf)         
+        fig.colorbar(contour, shrink=.8, ax=[ax], location = "left")                       
         #colorbar
 
     if gquiv:
@@ -166,16 +170,12 @@ if nav == "Wells":
     #    iverts = interpstreamspeed(x,y,u,v,verts,sc)  
     #    h = streamline(iverts)
     #    set (h,'Marker','.','Color','y','MarkerSize',18)
-    if gstream:
-        plt.contour(x,y,psi,gstream)#,'k','LineWidth',1)
     #plt.show()
     with col3:
-        st.header("3D-Plot")
+        st.header("Drawdown-Plot")
         st.pyplot(fig)
     with col1:
-        st.header("Contour-Plot")
-        st.markdown('')
-        st.markdown('')
+        st.header("Flowfield-Plot")
         st.markdown('')
         st.pyplot(fig2)
 
@@ -194,7 +194,7 @@ if nav == "Wells":
         st.markdown('')
         st.markdown('')
         '''
-        **Download:**  
+        **Results:**  
         (right-click and save as name.csv)  
         '''
         st.markdown(href, unsafe_allow_html=True)
