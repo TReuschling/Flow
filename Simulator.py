@@ -71,7 +71,7 @@ if nav == "Wells":
     gflowp_fit = 0     # flowpaths forward in time
     gflowp_bit = 0     # no. flowpaths backward in time (=0: none)
     gflowp_dot = 1     # flowpaths with dots indicating speed
-    gstream = 25        # streamfunction plot            10
+    gstream = 10        # streamfunction plot            10
     #----------------------------------------execution-------------------------------
     xvec = np.linspace(xmin, xmax, 100)
     yvec = np.linspace(ymin, ymax, 100)
